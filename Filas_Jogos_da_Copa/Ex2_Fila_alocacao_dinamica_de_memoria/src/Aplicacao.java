@@ -1,23 +1,181 @@
-public class Aplicacao{
-	public static void main(String[] args) throws Exception{
-		Jogo[] vetor = Jogo.lerArquivo();
-		String[] vetorPesquisa = Jogo.ler(vetor);
-		Jogo[] vetorPesquisado= Jogo.fazerPesquisa(vetorPesquisa, vetor);
+import java.io.*;
+class ArquivoTextoLeitura {
 
-		Fila fila = new Fila();
-		for(Jogo partida : vetorPesquisado) {
-			fila.enfileirar(partida);
+	private BufferedReader entrada;
+
+	ArquivoTextoLeitura(String nomeArquivo) {
+
+		try {
+			entrada = new BufferedReader(new InputStreamReader(new FileInputStream(nomeArquivo), "UTF-8"));
+		} catch (UnsupportedEncodingException excecao) {
+			System.out.println(excecao.getMessage());
+		} catch (FileNotFoundException excecao) {
+			System.out.println("Arquivo nao encontrado");
 		}
+	}
 
-/* 		// Lendo a segunda parte da entrada padrao
-		int quantidade = MyIO.readInt();
-		String linha; */
+	public void fecharArquivo() {
 
-		fila.mostrar();
+		try {
+			entrada.close();
+		} catch (IOException excecao) {
+			System.out.println("Erro no fechamento do arquivo de leitura: " + excecao);
+		}
+	}
+
+	@SuppressWarnings("finally")
+	public String ler() {
+
+		String textoEntrada = null;
+
+		try {
+			textoEntrada = entrada.readLine();
+		} catch (EOFException excecao) { // Excecao de final de arquivo.
+			textoEntrada = null;
+		} catch (IOException excecao) {
+			System.out.println("Erro de leitura: " + excecao);
+			textoEntrada = null;
+		} finally {
+			return textoEntrada;
+		}
+	}
 }
+class Celula {
+
+	private Jogo item;
+	private Celula proximo;
+	
+	public Celula(Jogo item) {
+		
+		this.item = item;
+		this.proximo = null;
+	}
+	
+	public Celula() {
+	
+		this.item = new Jogo();
+		this.proximo = null;
+	}
+	
+	public Jogo getItem() {
+		return item;
+	}
+	
+	public void setItem(Jogo item) {
+		this.item = item;
+	}
+
+	public Celula getProximo() {
+		return proximo;
+	}
+
+	public void setProximo(Celula proximo) {
+		this.proximo = proximo;
+	}
+}
+class Fila {
+
+	private Celula frente;
+	private Celula tras;
+	
+	public Fila() {
+		
+		Celula sentinela;
+		
+		sentinela = new Celula();
+		frente = sentinela;
+		tras = sentinela;
+	}
+	
+	public boolean filaVazia() {
+		boolean resp;
+		
+		if (frente == tras)
+			resp = true;
+		else
+			resp = false;
+		
+		return resp;
+	}
+	
+	public void enfileirar(Jogo novo) {
+		
+		Celula novaCelula;
+		
+		novaCelula = new Celula(novo);
+		tras.setProximo(novaCelula);
+		tras = novaCelula;
+		
+		MyIO.println((int)obterMediaGols());
+		
+	}
+	
+	public Jogo desenfileirar() throws Exception{
+		
+		Celula desenfileirado = null;
+		Celula proximaCelula;
+		
+		if (!filaVazia()) {
+			desenfileirado = frente.getProximo();
+			proximaCelula = desenfileirado.getProximo();
+			frente.setProximo(proximaCelula);
+			if (desenfileirado == tras)
+				tras = frente;
+			return desenfileirado.getItem();
+			
+		} else
+			throw new Exception ("Não foi possível desenfileirar nenhum elemento: a fila está vazia!");
+	}
+
+	public void mostrar(Jogo desenfileirado) {
+
+		System.out.print("(D) ");
+		desenfileirado.imprimir();
+
+	}
+
+	public void mostrarJogos() throws Exception{
+		
+		Celula aux;
+		int posicao = 0;
+		
+		if (!filaVazia()) {
+			aux = frente.getProximo();
+			
+			while (aux != null) {
+				MyIO.print("[" + posicao + "]");
+				aux.getItem().imprimir();
+				aux = aux.getProximo();
+				posicao++;
+			}
+		} else
+			throw new Exception("Não foi possível imprimir o conteúdo da fila: a fila está vazia!");
+	}
+	
+	public double obterMediaGols() {
+		double mediaTotal = 0;
+		int tamanhoArr = 0;
+		
+		Celula aux;
+		
+		if (!filaVazia()) {
+			aux = frente.getProximo();
+			
+			while (aux != null) {
+				tamanhoArr++;
+				mediaTotal += aux.getItem().getPlacarSelecao1() +  aux.getItem().getPlacarSelecao2();
+				aux = aux.getProximo();
+				
+			}
+			mediaTotal = mediaTotal / tamanhoArr;
+		}
+		
+		return Math.round(mediaTotal);
+	}
+	
 }
 class Jogo{
-  //declaração dos atributos
+	//declaração dos atributos
 private int dia;
 private int mes;
 private int ano;
@@ -43,8 +201,7 @@ public Jogo(String str){
   this.placarSelecao2=Integer.parseInt(stringArray[6]);
   this.selecao2=stringArray[7];
   this.local=stringArray[8];
-  }
-
+}
 
 //métodos para setar e retornar os atributo
 public void setDia(int dia) {
@@ -119,200 +276,78 @@ return cloneJogo;
 
 // método para ler arquivo
 public  static Jogo[] lerArquivo() {
-String nomeArquivo="tmp/partidas.txt";
-ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
-ArquivoTextoLeitura contarLinhas = new ArquivoTextoLeitura(nomeArquivo);
-
-int quantidade = 0;
-
-String linhaContar = contarLinhas.ler();
-while(linhaContar != null) {
-  quantidade++;
-  linhaContar = contarLinhas.ler();
-}
-contarLinhas.fecharArquivo();
-
-// Preenchendo um vetor de objetos com os dados do arquivo
-Jogo[] vetor = new Jogo[quantidade];
-int i = 0;
-String str = arquivoLeitura.ler();
-while (str != null) {
-  vetor[i++] = new Jogo(str);
-  str = arquivoLeitura.ler();
-}
-arquivoLeitura.fecharArquivo();
-return vetor;
-}
-
-public static String[] ler(Jogo[] vetor) {
-  // Lendo a entrada padrao
-  int quantidade =  vetor.length;
-  String[] dadosPesquisa = new String[quantidade];
-  String linhaPesquisa=MyIO.readLine();
+/*   String nomeArquivo="src/partidas.txt"; */
+  String nomeArquivo="/tmp/partidas.txt";
+  ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
   
-	while(!linhaPesquisa.equals("FIM")){
-    for(int j = 0; j < quantidade; j++) {
-      linhaPesquisa = MyIO.readLine();
-      dadosPesquisa[j] = linhaPesquisa;
-    }
+  // Preenchendo um vetor de objetos com os dados do arquivo
+	int quantidade = 900;
+  Jogo[] vetor = new Jogo[quantidade];
+  int i = 0;
+  String str = arquivoLeitura.ler();
+  while (str != null) {
+    vetor[i++] = new Jogo(str);
+    str = arquivoLeitura.ler();
   }
-  return dadosPesquisa;
+  arquivoLeitura.fecharArquivo();
+  return vetor;
   }
-
-//método fazer pesquisa de jogos
-public static Jogo[] fazerPesquisa(String[] vetorPesquisa, Jogo[] vetor) {
-int a = 0;
-String[] dadosPesquisa;
-Jogo[] vetorPesquisado = new Jogo[vetorPesquisa.length];
-int quantidade = vetorPesquisa.length;
-
-while(a < quantidade) {
-  dadosPesquisa = vetorPesquisa[a].split(";");
-
-  String data = dadosPesquisa[0];
-  String selecao1 = dadosPesquisa[1];
-  int dia = Integer.parseInt(data.split("/")[0]);
-  int mes = Integer.parseInt(data.split("/")[1]);
-  int ano = Integer.parseInt(data.split("/")[2]);
-
-  for(int j = 0; j < vetor.length; j++) {
-    if(vetor[j].getDia() == dia && vetor[j].getMes() == mes && vetor[j].getAno() == ano && vetor[j].getSelecao1().equals(selecao1)) 
-    {
-      vetorPesquisado[a]=vetor[j];
-    }
-  }
-  a++;
-}
-return vetorPesquisado;
-}
 
 //método imprimir
 public void imprimir() {
-MyIO.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia + "/" + this.mes + "] ["+ this.selecao1 + " (" + this.placarSelecao1 + ") x (" + this.placarSelecao2 + ") " + this.selecao2 + "] [" + this.local + "]");
-}
-
-}
-class Celula {
-
-	private Jogo item;
-	private Celula proximo;
-	
-	public Celula(Jogo item) {
-		
-		this.item = item;
-		this.proximo = null;
+	System.out.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia + "/" + this.mes + "] ["+ this.selecao1 + " (" + this.placarSelecao1 + ") x (" + this.placarSelecao2 + ") " + this.selecao2 + "] [" + this.local + "]");
 	}
-	
-	public Celula() {
-	
-		this.item = new Jogo();
-		this.proximo = null;
 	}
-	
-	public Jogo getItem() {
-		return item;
-	}
-	
-	public void setItem(Jogo item) {
-		this.item = item;
-	}
-
-	public Celula getProximo() {
-		return proximo;
-	}
-
-	public void setProximo(Celula proximo) {
-		this.proximo = proximo;
-	}
-}
-class Fila {
-
-	private Celula frente;
-	private Celula tras;
-	
-	public Fila() {
+public class Aplicacao{
+	public static void main(String[] args) throws Exception {
+		MyIO.setCharset("UTF-8");
+		Jogo[] vetor = Jogo.lerArquivo();
+		Jogo desenfileirado = new Jogo();
+		String pesquisa = MyIO.readLine();
+		Fila fila = new Fila();
 		
-		Celula sentinela;
-		
-		sentinela = new Celula();
-		frente = sentinela;
-		tras = sentinela;
-	}
-	
-	public boolean filaVazia() {
-		
-		if (frente == tras)
-			return true;
-		else
-			return false;
-	}
-	
-	public void enfileirar(Jogo novo) {
-		
-		Celula novaCelula;
-		
-		novaCelula = new Celula(novo);
-		tras.setProximo(novaCelula);
-		tras = novaCelula;
-		
-		MyIO.println((int)obterMediaGols());
-		
-	}
-	
-	public Jogo desenfileirar() throws Exception{
-		
-		Celula desenfileirado = null;
-		Celula proximaCelula;
-		
-		if (! filaVazia()) {
-			desenfileirado = frente.getProximo();
-			proximaCelula = desenfileirado.getProximo();
-			frente.setProximo(proximaCelula);
-			if (desenfileirado == tras)
-				tras = frente;
-			return desenfileirado.getItem();
-			
-		} else
-			throw new Exception ("Não foi possível desenfileirar nenhum elemento: a fila está vazia!");
-	}
-	
-	public void mostrar() throws Exception{
-		
-		Celula aux;
-		int posicao = 0;
-		
-		if (! filaVazia()) {
-			aux = frente.getProximo();
-			
-			while (aux != null) {
-				MyIO.print("[" + posicao + "]");
-				aux.getItem().imprimir();
-				aux = aux.getProximo();
-				posicao++;
+		while(!pesquisa.equals("FIM")) {
+			String data = pesquisa.split(";")[0];
+			String selecao1 = pesquisa.split(";")[1];
+			int dia = Integer.parseInt(data.split("/")[0]);
+			int mes = Integer.parseInt(data.split("/")[1]);
+			int ano = Integer.parseInt(data.split("/")[2]);
+			for(int i = 0; i < vetor.length; i++) {
+				if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
+				&& selecao1.equals(vetor[i].getSelecao1())) {
+					fila.enfileirar((vetor[i]));
+				}
+				
 			}
-		} else
-			throw new Exception("Não foi possível imprimir o conteúdo da fila: a fila está vazia!");
-	}
-	
-	public double obterMediaGols() {
-		double mediaTotal = 0;
-		int tamanhoArr = 0;
-		int totalGols = 0;
-		Celula aux;
-		
-		if (! filaVazia()) {
-			aux = frente.getProximo();
-			
-			while (aux != null) {
-				totalGols += aux.getItem().getPlacarSelecao1() + aux.getItem().getPlacarSelecao2();
-				aux = aux.getProximo();
-				tamanhoArr++;
-			}
-			mediaTotal = totalGols / tamanhoArr;
+			pesquisa = MyIO.readLine();
 		}
-		return Math.round(mediaTotal);
+
+		int numFila = Integer.parseInt(MyIO.readLine());
+
+		for (int i = 0; i < numFila; i++) {
+			String EouD = MyIO.readLine();
+			desenfileirado = new Jogo();
+			
+			if (EouD.equals("D")) {
+				desenfileirado = fila.desenfileirar();
+				fila.mostrar(desenfileirado);
+			}else {
+				EouD = EouD.replace("E ", "");
+				String date = EouD.split(";")[0];
+				String Selecao1 = EouD.split(";")[1];
+				int day = Integer.parseInt(date.split("/")[0]);
+				int month = Integer.parseInt(date.split("/")[1]);
+				int year = Integer.parseInt(date.split("/")[2]);
+
+				for (int z = 0; z < vetor.length; z++) {
+					if (day == vetor[z].getDia() && month == vetor[z].getMes()
+							&& year == vetor[z].getAno() && Selecao1.equals(vetor[z].getSelecao1())) {
+						desenfileirado = vetor[z];
+						fila.enfileirar(desenfileirado);
+					}
+				}
+			}
+		}
+		fila.mostrarJogos();
 	}
 }
-
-
-
