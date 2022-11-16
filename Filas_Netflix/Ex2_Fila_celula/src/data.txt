@@ -1,4 +1,3 @@
-Nome;Formato;Duração;País de Origem;Idioma Original;Emissora de Televisão;Transmissão Original;Número de Temporadas;Número de Episódios
 12 Monkeys;Série;40–47 minutos;Estados Unidos;Inglês;Syfy;16 de janeiro de 2015(2015-01-16) – atualmente(atualmente);3;36
 13 Reasons Why;Série;49–61 minutos;Estados Unidos;Inglês;Netflix;31 de março de 2017(2017-03-31) – presente;1;13
 Grimm;Série;42 minutos aprox.; Estados Unidos; Inglês;NBC;21 de outubro de 2011 - 31 de março de 2017;6;123
