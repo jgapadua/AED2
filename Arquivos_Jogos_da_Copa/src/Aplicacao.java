@@ -146,38 +146,37 @@ cloneJogo.local = this.local;
 return cloneJogo;
 }
 
-// método para ler arquivo
-public  static Jogo[] lerArquivo() {
-	/* String nomeArquivo="src/partidas.txt";*/
-  String nomeArquivo="/tmp/partidas.txt";
-  ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
-  
-  // Preenchendo um vetor de objetos com os dados do arquivo
-	int quantidade = 900;
-  Jogo[] vetor = new Jogo[quantidade];
-  int i = 0;
-  String str = arquivoLeitura.ler();
-  while (str != null) {
-    vetor[i++] = new Jogo(str);
-    str = arquivoLeitura.ler();
-  }
-  arquivoLeitura.fecharArquivo();
-  return vetor;
-  }
-
 //método imprimir
 public void imprimir() {
 	System.out.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia + "/" + this.mes + "] ["+ this.selecao1 + " (" + this.placarSelecao1 + ") x (" + this.placarSelecao2 + ") " + this.selecao2 + "] [" + this.local + "]");
 	}
 	}
 public class Aplicacao{
+		// método para ler arquivo
+		public  static void lerArquivo(Jogo[] vetor) {
+			 String nomeArquivo="src/partidas.txt";
+			/*String nomeArquivo="/tmp/partidas.txt";*/
+			ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
+
+			// Preenchendo um vetor de objetos com os dados do arquivo
+			int i = 0;
+			String str = arquivoLeitura.ler();
+			while (str != null) {
+				vetor[i++] = new Jogo(str);
+				str = arquivoLeitura.ler();
+			}
+			arquivoLeitura.fecharArquivo();
+			}
 	public static void main(String[] args){
 		MyIO.setCharset("UTF-8");
-		Jogo[] vetor = Jogo.lerArquivo();
-		
+		int tamanho=900;
+		Jogo vetor[] = new Jogo[tamanho];
+		lerArquivo(vetor);
+
 		// Lendo a primeira parte da entrada padrao
 		String s = MyIO.readLine();
 			int quantidade = Integer.parseInt(s);
+			Jogo pesquisa[] = new Jogo[quantidade];
 			for (int a = 0; a < quantidade; a++) {
 				s = MyIO.readLine();
 				String data = s.split(";")[0];
@@ -188,10 +187,11 @@ public class Aplicacao{
 	
 				for (int j = 0; j < vetor.length; j++) {
 					if (vetor[j].getDia() == dia && vetor[j].getMes() == mes && vetor[j].getAno() == ano && vetor[j].getSelecao1().equals(selecao1)) {
-						vetor[j].imprimir();
+						pesquisa[a] = vetor[j].clone();
 						break;
 					}
 				}
+				pesquisa[a].imprimir();
 			}
 		}
 	}
