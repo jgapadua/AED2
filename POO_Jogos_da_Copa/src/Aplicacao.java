@@ -1,5 +1,3 @@
-import java.io.*;
-
 class Jogo{
 	//declaração dos atributos
 private int dia;
@@ -114,18 +112,7 @@ public Jogo ler(String str) {
 	jogo.setLocal(stringArray[8]);
 	return jogo;
 }
-public  static Jogo[] lerJogos(){
-	// Lendo a primeira parte da entrada padrao
-	Jogo vetor[] = new Jogo[500];
-	String s = MyIO.readLine();
-	int i = 0;
-	while (!s.equals("FIM")) {
-		Jogo jogo = new Jogo();
-		vetor[i++] = jogo.ler(s);
-		s = MyIO.readLine();
-	}
-	return vetor;
-}
+
 //método imprimir
 public void imprimir() {
 System.out.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia + "/" + this.mes + "] ["+ this.selecao1 + " (" + this.placarSelecao1 + ") x (" + this.placarSelecao2 + ") " + this.selecao2 + "] [" + this.local + "]");
@@ -133,27 +120,44 @@ System.out.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia +
 }
 
 public class Aplicacao {
-  public static void main(String[] args) {
-		MyIO.setCharset("UTF-8");
-		// LEITURA JOGOS
-			Jogo[] vetor = Jogo.lerJogos();
-				// Lendo a segunda parte da entrada padrao
-			String s = MyIO.readLine();
-			int quantidade = Integer.parseInt(s);
-			for (int a = 0; a < quantidade; a++) {
-				s = MyIO.readLine();
-				String data = s.split(";")[0];
-				String selecao1 = s.split(";")[1];
-				int dia = Integer.parseInt(data.split("/")[0]);
-				int mes = Integer.parseInt(data.split("/")[1]);
-				int ano = Integer.parseInt(data.split("/")[2]);
-	
-				for (int j = 0; j < vetor.length; j++) {
-					if (vetor[j].getDia() == dia && vetor[j].getMes() == mes && vetor[j].getAno() == ano && vetor[j].getSelecao1().equals(selecao1)) {
-						vetor[j].imprimir();
-						break;
+	public static boolean isFim(String str){
+		return (str.length() == 3 && 
+		str.charAt(0) == 'F' && 
+		str.charAt(1) == 'I' && 
+		str.charAt(2) == 'M');
+  }
+	public  static void lerJogos(Jogo[] vetor){
+		// Lendo a primeira parte da entrada padrao
+		String str = MyIO.readLine();
+		int i = 0;
+		while (isFim(str)==false) {
+			Jogo jogo = new Jogo();
+			vetor[i++] = jogo.ler(str);
+			str = MyIO.readLine();
+		}
+	}
+	  public static void main(String[] args) {
+			MyIO.setCharset("UTF-8");
+			// LEITURA JOGOS
+			Jogo vetor[] = new Jogo[5000];
+			lerJogos(vetor);
+					// Lendo a segunda parte da entrada padrao
+				String s = MyIO.readLine();
+				int quantidade = Integer.parseInt(s);
+				for (int a = 0; a < quantidade; a++) {
+					s = MyIO.readLine();
+					String data = s.split(";")[0];
+					String selecao1 = s.split(";")[1];
+					int dia = Integer.parseInt(data.split("/")[0]);
+					int mes = Integer.parseInt(data.split("/")[1]);
+					int ano = Integer.parseInt(data.split("/")[2]);
+		
+					for (int j = 0; j < vetor.length; j++) {
+						if (vetor[j].getDia() == dia && vetor[j].getMes() == mes && vetor[j].getAno() == ano && vetor[j].getSelecao1().equals(selecao1)) {
+							vetor[j].imprimir();
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
