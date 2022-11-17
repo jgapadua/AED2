@@ -140,11 +140,11 @@ public class Aplicacao {
 			MyIO.setCharset("UTF-8");
 			// LEITURA JOGOS
 			Jogo vetor[] = new Jogo[5000];
-			Jogo pesquisa = new Jogo();
 			lerJogos(vetor);
 					// Lendo a segunda parte da entrada padrao
 				String s = MyIO.readLine();
 				int quantidade = Integer.parseInt(s);
+				Jogo pesquisa[] = new Jogo[quantidade];
 				for (int a = 0; a < quantidade; a++) {
 					s = MyIO.readLine();
 					String data = s.split(";")[0];
@@ -155,11 +155,11 @@ public class Aplicacao {
 		
 					for (int j = 0; j < vetor.length; j++) {
 						if (vetor[j].getDia() == dia && vetor[j].getMes() == mes && vetor[j].getAno() == ano && vetor[j].getSelecao1().equals(selecao1)) {
-							pesquisa = vetor[j].clone();
+							pesquisa[a] = vetor[j].clone();
 							break;
 						}
 					}
-					pesquisa.imprimir();
+					pesquisa[a].imprimir();
 				}
 			}
 		}
