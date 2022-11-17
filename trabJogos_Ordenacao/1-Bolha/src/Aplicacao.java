@@ -213,41 +213,13 @@ public class Aplicacao {
 					 for (int i  = (n - 1); i > 0; i--) {
 							 for (int j = 0; j < i; j++) {
 								 comp++;
-								 if (vetor[j].getDia() > vetor[j + 1].getDia()) {			
+								 if (compara(vetor[j], vetor[j + 1])) {			
 									 Jogo temp = vetor[j];
 									 vetor[j] = vetor[j+1];
 									 vetor[j+1] = temp;  
 									 mov++;    				
-						 }
-						 else if(vetor[j].getDia() == vetor[j + 1].getDia()) {
-							 if (vetor[j].getMes() > vetor[j+1].getMes()) {
-							 
-									 Jogo temp = vetor[j];
-										 vetor[j] = vetor[j+1];
-										 vetor[j+1] = temp;
-										 mov++;
-						 }}
-						 else if(vetor[j].getMes() == vetor[j+1].getMes()) {
-							 
-							 if(vetor[j].getAno() > vetor[j+1].getAno()) {
-							 
-							 Jogo temp = vetor[j];
-									 vetor[j] = vetor[j+1];
-									 vetor[j+1] = temp;
-									 mov++;
-						 }}
-						 
-						 else if(vetor[j].getAno() == vetor[j+1].getAno()) {
-							 
-							 if(vetor[j].getSelecao1().compareTo(vetor[j+1].getSelecao1())>0)  {
-							 
-							 Jogo temp = vetor[j];
-									 vetor[j] = vetor[j+1];
-									 vetor[j+1] = temp;
-									 mov++;
-								 }}
-							 }
-									 
+						 			}
+						 		}
 							 }
 					 
 					 long time = System.currentTimeMillis() - start;
@@ -256,6 +228,21 @@ public class Aplicacao {
 					 arquivoEscritaBolha.escrever("730216" + "\t" + time + "\t" + comp + "\t" + mov);
 					 arquivoEscritaBolha.fecharArquivo();
 				 }
+				
+				 public static boolean compara(Jogo vetor, Jogo tempJogo){
+					if((vetor.getDia()) > ((tempJogo.getDia()))){
+							return true;
+					}else if((vetor.getDia())==((tempJogo.getDia())) && ((vetor.getMes()) > ((tempJogo.getMes())))){
+							return true;
+					}else if((vetor.getDia())==((tempJogo.getDia())) && ((vetor.getMes()) == ((tempJogo.getMes()))) && ((vetor.getAno()) > ((tempJogo.getAno())))){
+						return true;
+					}else if((vetor.getDia())==((tempJogo.getDia())) && ((vetor.getMes()) == ((tempJogo.getMes()))) && ((vetor.getAno()) == ((tempJogo.getAno()))) && ((vetor.getSelecao1()).compareTo((tempJogo.getSelecao1())))>0){
+						return true;
+					}else{
+							return false;
+					}
+					
+			}
 		static void printArray(Jogo arr[])
 			 {
 					 int n = arr.length;
