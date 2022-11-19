@@ -52,7 +52,7 @@ class Pilha {
 	}
 	public Pilha() {
 
-		pilha = new Jogo[900];
+		pilha = new Jogo[600];
 		topo = 0;
 	}
 
@@ -228,8 +228,8 @@ return cloneJogo;
 
 // método para ler arquivo
 public  static Jogo[] lerArquivo() {
- String nomeArquivo="src/partidas.txt";
-  /*String nomeArquivo="/tmp/partidas.txt";*/
+/*  String nomeArquivo="src/partidas.txt"; */
+  String nomeArquivo="/tmp/partidas.txt";
   ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
   
   // Preenchendo um vetor de objetos com os dados do arquivo
@@ -257,49 +257,38 @@ public class Aplicacao {
 		MyIO.setCharset("UTF-8");
 		Jogo[] vetor = Jogo.lerArquivo();
 		Jogo desempilhado = new Jogo();
-
-		// ENTRADA
+		String pesquisa = MyIO.readLine();
 		Pilha pilha = new Pilha();
 
-		for (int a = 0; a < 601; a++) {
-
-			String pesquisa = MyIO.readLine();
-			if (pesquisa.equals("FIM")) {
-				break;
-			}
+		while(!pesquisa.equals("FIM")) {
 			String data = pesquisa.split(";")[0];
 			String selecao1 = pesquisa.split(";")[1];
 			int dia = Integer.parseInt(data.split("/")[0]);
 			int mes = Integer.parseInt(data.split("/")[1]);
 			int ano = Integer.parseInt(data.split("/")[2]);
-
-			for (int j = 0; j < vetor.length; j++) {
-				if (dia == vetor[j].getDia() && mes == vetor[j].getMes() && ano == vetor[j].getAno()
-						&& selecao1.equals(vetor[j].getSelecao1())) {
-					desempilhado = vetor[j];
-					pilha.empilhar(desempilhado);
+			for(int i = 0; i < vetor.length; i++) {
+				if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
+				&& selecao1.equals(vetor[i].getSelecao1())) {
+					pilha.empilhar((vetor[i]));
 				}
+				
 			}
+			pesquisa = MyIO.readLine();
 		}
 
-		//System.out.println("qntd");
 
-		int qntd = MyIO.readInt();
-		//System.out.println(qntd);
+
+		int qntd = Integer.parseInt(MyIO.readLine());
+
 
 		for (int i = 0; i < qntd; i++) {
-			//System.out.println("EouD");
 			String EouD = MyIO.readLine();
 			desempilhado = new Jogo();
 			
 			if (EouD.equals("D")) {
-
 				desempilhado = pilha.desempilhar();
 				pilha.mostrar(desempilhado);
-
-			}
-
-			else {
+			}else {
 				EouD = EouD.replace("E ", "");
 				String date = EouD.split(";")[0];
 				String Selecao1 = EouD.split(";")[1];
@@ -308,24 +297,15 @@ public class Aplicacao {
 				int year = Integer.parseInt(date.split("/")[2]);
 
 				for (int z = 0; z < vetor.length; z++) {
-
 					if (day == vetor[z].getDia() && month == vetor[z].getMes()
 							&& year == vetor[z].getAno() && Selecao1.equals(vetor[z].getSelecao1())) {
-
 						desempilhado = vetor[z];
-
 						pilha.empilhar(desempilhado);
-
 					}
-
 				}
-
 			}
-
 		}
-		
 		pilha.mostrarJogos();
-	
 	}
 }
 
