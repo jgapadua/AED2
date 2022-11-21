@@ -1,4 +1,5 @@
 import java.io.*;
+
 class ArquivoTextoLeitura {
 
  private BufferedReader entrada;
@@ -47,91 +48,85 @@ class ArquivoTextoLeitura {
 
 class Celula {
 
- private Jogo item;
- private Celula proximo;
- 
- public Celula(Jogo novo) {
-	 item = novo;
-	 proximo = null;
- }
- 
- public Celula() {
-	 
-	 item = new Jogo();
-	 proximo = null;
- }
- 
- public Jogo getItem() {
-	 return item;
- }
- public void setItem(Jogo item) {
-	 this.item = item;
- }
- 
- public Celula getProximo() {
-	 return proximo;
- }
- public void setProximo(Celula proximo) {
-	 this.proximo = proximo;
- }
+	private Jogo item;
+	private Celula proximo;
+	
+	public Celula(Jogo novo) {
+		item = novo;
+		proximo = null;
+	}
+	
+	public Celula() {
+		
+		item = new Jogo();
+		proximo = null;
+	}
+	
+	public Jogo getItem() {
+		return item;
+	}
+	public void setItem(Jogo item) {
+		this.item = item;
+	}
+	
+	public Celula getProximo() {
+		return proximo;
+	}
+	public void setProximo(Celula proximo) {
+		this.proximo = proximo;
+	}
 }
 
 class Pilha {
 
- private Celula fundo;
- private Celula topo;
-
- public Pilha() {
-	 
-	 Celula sentinela;
-	 
-	 sentinela = new Celula();
-	 fundo = sentinela;
-	 topo = sentinela;
- }
-
- public boolean pilhaVazia() {
- 
-	 boolean resp;
-	 
-	 if (topo == fundo)
-		 resp = true;
-	 else
-		 resp = false;
-	 
-	 return resp;
- }
-
- public void empilhar(Jogo novo) {
-	 
-	 Celula novaCelula;
-	 
-	 novaCelula = new Celula(novo);
-	 novaCelula.setProximo(topo);
-	 topo = novaCelula;
- }
-
- public Jogo desempilhar() throws Exception {
-	 
-	 Celula desempilhado;
-	 
-	 if (! pilhaVazia()) {
-		 desempilhado = topo;
-		 topo = topo.getProximo();
-		 desempilhado.setProximo(null);
-		 return (desempilhado.getItem());
-	 } else
-		 throw new Exception("Não foi possível desempilhar: a pilha está vazia!");
- }
-
-
- public Jogo consultarTopo() throws Exception {
-	 
-	 if (! pilhaVazia()) {
-		 return(topo.getItem());
-	 } else
-		 throw new Exception("Não foi possível consultar o topo da pilha: a pilha está vazia!");
- }
+	private Celula fundo;
+	private Celula topo;
+	
+	public Pilha() {
+		
+		Celula sentinela;
+		
+		sentinela = new Celula();
+		fundo = sentinela;
+		topo = sentinela;
+	}
+	
+	public boolean pilhaVazia() {
+		
+		if (fundo == topo)
+			return true;
+		else
+			return false;
+	}
+	
+	public void empilhar(Jogo novo) {
+		
+		Celula novaCelula;
+		
+		novaCelula = new Celula(novo);
+		novaCelula.setProximo(topo);
+		topo = novaCelula;
+	}
+	
+	public Jogo desempilhar() throws Exception {
+		
+		Jogo desempilhado;
+		
+		if (!pilhaVazia()) {
+			desempilhado = topo.getItem();
+			topo = topo.getProximo();
+			return desempilhado;
+		} else
+			throw new Exception ("Não foi possível desempilhar nenhum item: a pilha está vazia!");
+	}
+	
+	public Jogo consultarTopo() throws Exception {
+		
+		if (!pilhaVazia()) {
+			return (topo.getItem());
+		} else
+			throw new Exception("Não foi possível consultar o elemento do topo da pilha: a pilha está vazia!");
+	}
 
  public void mostrar(Jogo desempilhado) {
 
@@ -157,6 +152,7 @@ class Pilha {
  }
 
 }
+
 class Jogo{
  //declaração dos atributos
 private int dia;
@@ -257,25 +253,6 @@ cloneJogo.local = this.local;
 return cloneJogo;
 }
 
-// método para ler arquivo
-public  static Jogo[] lerArquivo() {
-/*  String nomeArquivo="src/partidas.txt"; */
- String nomeArquivo="/tmp/partidas.txt";
- ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
- 
- // Preenchendo um vetor de objetos com os dados do arquivo
- int quantidade = 900;
- Jogo[] vetor = new Jogo[quantidade];
- int i = 0;
- String str = arquivoLeitura.ler();
- while (str != null) {
-	 vetor[i++] = new Jogo(str);
-	 str = arquivoLeitura.ler();
- }
- arquivoLeitura.fecharArquivo();
- return vetor;
- }
-
 //método imprimir
 public void imprimir() {
  System.out.println("[COPA " + this.ano + "] [" + this.etapa + "] [" + this.dia + "/" + this.mes + "] ["+ this.selecao1 + " (" + this.placarSelecao1 + ") x (" + this.placarSelecao2 + ") " + this.selecao2 + "] [" + this.local + "]");
@@ -283,59 +260,74 @@ public void imprimir() {
  }
 
 public class Aplicacao {
-
- public static void main(String[] args) throws Exception {
-	 MyIO.setCharset("UTF-8");
-	 Jogo[] vetor = Jogo.lerArquivo();
-	 Jogo desempilhado = new Jogo();
-	 String pesquisa = MyIO.readLine();
-	 Pilha pilha = new Pilha();
-
-	 while(!pesquisa.equals("FIM")) {
-		 String data = pesquisa.split(";")[0];
-		 String selecao1 = pesquisa.split(";")[1];
-		 int dia = Integer.parseInt(data.split("/")[0]);
-		 int mes = Integer.parseInt(data.split("/")[1]);
-		 int ano = Integer.parseInt(data.split("/")[2]);
-		 for(int i = 0; i < vetor.length; i++) {
-			 if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
-			 && selecao1.equals(vetor[i].getSelecao1())) {
-				 pilha.empilhar((vetor[i]));
-			 }
-			 
-		 }
-		 pesquisa = MyIO.readLine();
-	 }
-
-
-
-	 int qntd = Integer.parseInt(MyIO.readLine());
-
-
-	 for (int i = 0; i < qntd; i++) {
-		 String EouD = MyIO.readLine();
-		 desempilhado = new Jogo();
-		 
-		 if (EouD.equals("D")) {
-			 desempilhado = pilha.desempilhar();
-			 pilha.mostrar(desempilhado);
-		 }else {
-			 EouD = EouD.replace("E ", "");
-			 String date = EouD.split(";")[0];
-			 String Selecao1 = EouD.split(";")[1];
-			 int day = Integer.parseInt(date.split("/")[0]);
-			 int month = Integer.parseInt(date.split("/")[1]);
-			 int year = Integer.parseInt(date.split("/")[2]);
-
-			 for (int z = 0; z < vetor.length; z++) {
-				 if (day == vetor[z].getDia() && month == vetor[z].getMes()
-						 && year == vetor[z].getAno() && Selecao1.equals(vetor[z].getSelecao1())) {
-					 desempilhado = vetor[z];
-					 pilha.empilhar(desempilhado);
+		// método para ler arquivo
+		public  static void lerArquivo(Jogo[] vetor) {
+			/* 		String nomeArquivo="src/partidas.txt"; */
+				 String nomeArquivo="/tmp/partidas.txt";
+				 ArquivoTextoLeitura arquivoLeitura = new ArquivoTextoLeitura(nomeArquivo);
+			
+				 // Preenchendo um vetor de objetos com os dados do arquivo
+				 int i = 0;
+				 String str = arquivoLeitura.ler();
+				 while (str != null) {
+					 vetor[i++] = new Jogo(str);
+					 str = arquivoLeitura.ler();
 				 }
-			 }
-		 }
-	 }
-	 pilha.mostrarJogos();
- }
+				 arquivoLeitura.fecharArquivo();
+				 }
+ public static void main(String[] args) throws Exception {
+	MyIO.setCharset("UTF-8");
+	int tamanho=900;
+	Jogo vetor[] = new Jogo[tamanho];
+	lerArquivo(vetor);
+	Jogo desempilhado = new Jogo();
+	String pesquisa = MyIO.readLine();
+	Pilha pilha = new Pilha();
+
+	while(!pesquisa.equals("FIM")) {
+		String data = pesquisa.split(";")[0];
+		String selecao1 = pesquisa.split(";")[1];
+		int dia = Integer.parseInt(data.split("/")[0]);
+		int mes = Integer.parseInt(data.split("/")[1]);
+		int ano = Integer.parseInt(data.split("/")[2]);
+		for(int i = 0; i < vetor.length; i++) {
+			if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
+			&& selecao1.equals(vetor[i].getSelecao1())) {
+				pilha.empilhar((vetor[i]));
+			}
+			
+		}
+		pesquisa = MyIO.readLine();
+	}
+
+	int qntd = Integer.parseInt(MyIO.readLine());
+
+
+	for (int i = 0; i < qntd; i++) {
+		String EouD = MyIO.readLine();
+		desempilhado = new Jogo();
+		
+		if (EouD.equals("D")) {
+			desempilhado = pilha.desempilhar();
+			pilha.mostrar(desempilhado);
+		}else {
+			EouD = EouD.replace("E ", "");
+			String date = EouD.split(";")[0];
+			String Selecao1 = EouD.split(";")[1];
+			int day = Integer.parseInt(date.split("/")[0]);
+			int month = Integer.parseInt(date.split("/")[1]);
+			int year = Integer.parseInt(date.split("/")[2]);
+
+			for (int z = 0; z < vetor.length; z++) {
+				if (day == vetor[z].getDia() && month == vetor[z].getMes()
+						&& year == vetor[z].getAno() && Selecao1.equals(vetor[z].getSelecao1())) {
+					desempilhado = vetor[z];
+					pilha.empilhar(desempilhado);
+				}
+			}
+		}
+	}
+	pilha.mostrarJogos();
 }
+}
+
