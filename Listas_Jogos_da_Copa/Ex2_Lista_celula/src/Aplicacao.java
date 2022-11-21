@@ -45,189 +45,200 @@ class ArquivoTextoLeitura {
 		}
 	}
 }
+
+class Celula {
+
+	private Jogo item;
+	private Celula proximo;
+	
+	public Celula(Jogo novo) {
+		item = novo;
+		proximo = null;
+	}
+	
+	public Celula() {
+		
+		item = new Jogo();
+		proximo = null;
+	}
+	
+	public Jogo getItem() {
+		return item;
+	}
+	public void setItem(Jogo item) {
+		this.item = item;
+	}
+	
+	public Celula getProximo() {
+		return proximo;
+	}
+	public void setProximo(Celula proximo) {
+		this.proximo = proximo;
+	}
+}
+
 class Lista {
 
-	private Jogo lista[];
-	private int primeiro;
-	private int ultimo;
+	private Celula primeiro;
+	private Celula ultimo;
 	private int tamanho;
-	
-	public Lista(int M) {
-		
-		lista = new Jogo[M];
-		tamanho = 0;
-		primeiro = 0;
-		ultimo = 0;
-	}
 	
 	public Lista() {
 		
+		Celula sentinela;
+		
+		sentinela = new Celula();
+		primeiro = sentinela;
+		ultimo = sentinela;
+		tamanho = 0;
 	}
 	
 	public boolean listaVazia() {
-		
-		boolean resp;
-		
+	
 		if (primeiro == ultimo)
-			resp = true;
+			return true;
 		else
-			resp = false;
-		
-		return resp;
-	}
-	
-	public boolean listaCheia() {
-		
-		boolean resp;
-		
-		if (ultimo == lista.length) 
-			resp = true;
-		else
-			resp = false;
-		
-		return resp;
-	}
-	
-	public void inserirInicio(Jogo novo) throws Exception {
-
-		int index = primeiro;
-
-		if (!listaCheia()) {
-			for (int i = ultimo; i > index; i--)
-				lista[i] = lista[i - 1];
-
-			lista[index] = novo;
-
-			ultimo++;
-			tamanho++;
-		} else
-			throw new Exception("Nao foi possivel inserir o item na lista: lista cheia!");
-
+			return false;
 	}
 	
 	public void inserir(Jogo novo, int posicao) throws Exception {
 		
-		if (!listaCheia()) {
-			if ((posicao >= 0) && (posicao <= tamanho)) {
-				for (int i = ultimo; i > posicao; i--)
-					lista[i] = lista[i-1];
-				
-				lista[posicao] = novo;
-				
-				ultimo++;
-				tamanho++;
-			} else
-				throw new Exception("Nao foi possivel inserir o item na lista: posicao informada � invalida!");
-		} else
-			throw new Exception("Nao foi possivel inserir o item na lista: a lista esta cheia!");
-	}
-	
-	public void inserirFim(Jogo novo) throws Exception {
-
-		int index = ultimo;
-
-		if (!listaCheia()) {
-			for (int i = ultimo; i > index; i--)
-				lista[i] = lista[i - 1];
-
-			lista[index] = novo;
-
-			ultimo++;
-			tamanho++;
-
-		} else
-			throw new Exception("Nao foi possivel inserir o item na lista: a lista esta cheia!");
-
-	}
-	
-	public Jogo remover(int posicao) throws Exception {
+		Celula anterior, novaCelula, proximaCelula;
 		
-		Jogo removido;
+		if ((posicao >= 0) && (posicao <= tamanho)) {
+			anterior = primeiro;
+			for (int i = 0; i < posicao; i++) 
+				anterior = anterior.getProximo();
+			
+			novaCelula = new Celula(novo);
+			
+			proximaCelula = anterior.getProximo();
+			
+			anterior.setProximo(novaCelula);
+			novaCelula.setProximo(proximaCelula);
+			
+			if (posicao == tamanho)
+				ultimo = novaCelula;
+			
+			tamanho++;
+			
+		} else
+			throw new Exception("Não foi possível inserir o item na lista: posição de inser��o inválida!");
+	}
+	
+	public void inserirInicio(Jogo novo) {
+		
+		Celula novaCelula;
+		
+		novaCelula = new Celula(novo);
+		
+		novaCelula.setProximo(primeiro);
+		
+		primeiro = novaCelula;
+		
+		tamanho++;
+		
+	}
+	
+	public void inserirFim(Jogo novo) {
+		
+		Celula novaCelula;
+		
+		novaCelula = new Celula(novo);
+		
+		
+		ultimo.setProximo(novaCelula);
+		
+		ultimo = novaCelula;
+		
+		tamanho++;
+		
+	}
+	
+	public Jogo remover(int posicao) throws Exception{
+	
+		Celula anterior;
+		Celula removido, proximaCelula;
 		
 		if (!listaVazia()) {
 			if ((posicao >= 0) && (posicao < tamanho)) {
+				anterior = primeiro;
+				for (int i = 0; i < posicao; i++)
+					anterior = anterior.getProximo();
+					
+				removido = anterior.getProximo();
 				
-				removido = lista[posicao];
+				proximaCelula = removido.getProximo();
+				
+				anterior.setProximo(proximaCelula);
+				
+				if (removido == ultimo)
+					ultimo = anterior;
+				
 				tamanho--;
 				
-				for (int i = posicao; i < tamanho; i++) {
-					lista[i] = lista[i+1];
-				}
+				return (removido.getItem());
 				
-				ultimo--;
-				
-				return removido;
 			} else
-				throw new Exception("Nao foi possivel remover o item da lista: posicao informada � invalida!");
+				throw new Exception("Não foi possível remover o item da lista: posição de remoção inválida!");
 		} else
-			throw new Exception("Nao foi possivel remover o item da lista: a lista esta vazia!");
+			throw new Exception("Não foi possível remover o item da lista: a lista está vazia!");
 	}
 	
-public Jogo removerInicio() throws Exception {
+	public Jogo removerInicio(){
+		Celula removido, proxima;
+	    if(!listaVazia()){
+	    	removido = primeiro;
+	    	proxima = primeiro.getProximo();
+	        primeiro = proxima;
+	        tamanho--;
+	        return (removido.getItem());
+	    } else
+	    	return null;
+	    
+	}
+	
+	public Jogo removerFim()  {
 		
-		Jogo removido;
+		Celula removido, aux, anterior;
+		
+		aux = primeiro;
+		anterior = primeiro;
 		
 		if (!listaVazia()) {
-				
-				removido = lista[0];
-				tamanho--;
-				
-				for (int i = 0; i < tamanho; i++) {
-					lista[i] = lista[i+1];
-				}
-				
-				ultimo--;
-				
-				return removido;
-			} else
-			throw new Exception("Nao foi possivel remover o item da lista: a lista esta vazia!");
-	}
-
-
-public Jogo removerFim() throws Exception {
-	
-	Jogo removido;
-	
-	if (!listaVazia()) {
 			
-			removido = lista[tamanho - 1];
+			while(aux.getProximo() != null) {
+				anterior = aux;
+				aux = aux.getProximo();
+			}
+			anterior.setProximo(null);
+			ultimo = anterior;
+			
+			removido = ultimo;
+			
 			tamanho--;
 			
-			for (int i = lista.length - 1; i < tamanho; i++) {
-				lista[i] = lista[i-1];
-			}
-			
-			ultimo--;
-			
-		   return removido;
-		   
-		} else
-		throw new Exception("Nao foi possivel remover o item da lista: a lista esta vazia!");
-}
+			return (removido.getItem());
+		} 
+		else
+			return null;
+	}
 	
 	public void mostrar() throws Exception {
 		
 		if (!listaVazia()) {
 			
-			for (int i = primeiro; i < ultimo; i++) {
-				MyIO.print("[" + i + "]");
-				lista[i].imprimir();
-			}
+			Celula aux;
+			int count = 0;
+			aux = primeiro.getProximo();
+			while (aux != null) {
+				MyIO.print("[" + count + "]");
+				aux.getItem().imprimir();
+				aux = aux.getProximo();
+				count++;
+			}	
 		} else
-			throw new Exception("Nao foi possivel imprimir o conte�do da lista: a lista esta vazia!");
-	}
-
-	
-	public void imprimir() throws Exception {
-		
-		if (!listaVazia()) {
-			
-			for (int i = primeiro; i < ultimo; i++) {
-				System.out.print("Posição: " + i + ": ");
-				lista[i].imprimir();
-			}
-		} else
-			throw new Exception("Não foi possível imprimir o conteúdo da lista: a lista está vazia!");
+			throw new Exception("Não foi possível imprimir o conte�do da lista: a lista está vazia!");
 	}
 	public void mostrar2(Jogo removido) {
 
@@ -236,6 +247,7 @@ public Jogo removerFim() throws Exception {
 
 	}
 }
+
 
 class Jogo{
 	//declaração dos atributos
@@ -366,38 +378,32 @@ public class Aplicacao{
 		Jogo vetor[] = new Jogo[tamanho];
 		lerArquivo(vetor);
 		Jogo removido = new Jogo();
-		Lista lista = new Lista(900);
+		String pesquisa = MyIO.readLine();
+		Lista lista = new Lista();
+		
+		while(!pesquisa.equals("FIM")) {
+			String data = pesquisa.split(";")[0];
+			String selecao1 = pesquisa.split(";")[1];
+			int dia = Integer.parseInt(data.split("/")[0]);
+			int mes = Integer.parseInt(data.split("/")[1]);
+			int ano = Integer.parseInt(data.split("/")[2]);
 
-
-			String pesquisa = MyIO.readLine();
-			while(!pesquisa.equals("FIM")) {
-				String data = pesquisa.split(";")[0];
-				String selecao1 = pesquisa.split(";")[1];
-				int dia = Integer.parseInt(data.split("/")[0]);
-				int mes = Integer.parseInt(data.split("/")[1]);
-				int ano = Integer.parseInt(data.split("/")[2]);
-
-				for(int i = 0; i < vetor.length; i++) {
-					if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
-					&& selecao1.equals(vetor[i].getSelecao1())) {
-						lista.inserirFim((vetor[i]));
-					}
-					
+			for(int i = 0; i < vetor.length; i++) {
+				if(dia == vetor[i].getDia() && mes == vetor[i].getMes() && ano == vetor[i].getAno()
+				&& selecao1.equals(vetor[i].getSelecao1())) {
+					lista.inserirFim((vetor[i]));
 				}
-				pesquisa = MyIO.readLine();
+				
 			}
-		//lista.imprimir();
-
-		// System.out.println("qntd");
-
+			pesquisa = MyIO.readLine();
+		}
+		
 		int qntd = MyIO.readInt();
-		// System.out.println(qntd);
-
+		
 		for (int i = 0; i < qntd; i++) {
-			// System.out.println("escolha");
 			String escolha = MyIO.readLine();
 			removido = new Jogo();
-
+			
 			if (escolha.equals("II")) {
 				escolha = escolha.replace("II ", "");
 				String date = escolha.split(";")[0];
