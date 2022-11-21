@@ -77,6 +77,7 @@ class Celula {
 	}
 }
 
+
 class Pilha {
 
 	private Celula fundo;
