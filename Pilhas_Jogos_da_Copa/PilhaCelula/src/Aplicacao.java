@@ -94,10 +94,14 @@ class Pilha {
 	
 	public boolean pilhaVazia() {
 		
-		if (fundo == topo)
-			return true;
+		boolean resp;
+		
+		if (topo == fundo)
+			resp = true;
 		else
-			return false;
+			resp = false;
+		
+		return resp;
 	}
 	
 	public void empilhar(Jogo novo) {
@@ -111,12 +115,13 @@ class Pilha {
 	
 	public Jogo desempilhar() throws Exception {
 		
-		Jogo desempilhado;
+		Celula desempilhado;
 		
 		if (!pilhaVazia()) {
-			desempilhado = topo.getItem();
+			desempilhado = topo;
 			topo = topo.getProximo();
-			return desempilhado;
+			desempilhado.setProximo(null);
+			return (desempilhado.getItem());
 		} else
 			throw new Exception ("Não foi possível desempilhar nenhum item: a pilha está vazia!");
 	}
@@ -143,7 +148,7 @@ class Pilha {
 		 aux = topo;
 		 
 		 while (aux != null) {
-			 MyIO.print("[" + posicao + "]");
+			System.out.print("[" + posicao + "]");
 			 aux.getItem().imprimir();
 			 aux = aux.getProximo();
 			 posicao++;
